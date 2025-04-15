@@ -1,6 +1,3 @@
-
-
-// app/login.tsx (hoặc bất kỳ tên nào bạn đặt)
 import React, { useState } from 'react';
 import {
   View,
@@ -35,7 +32,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Đăng nhập</Text>
-
+      <Text className='font-bold text-lg text-red-50'>hello</Text>
       <TextInput
         placeholder="Email"
         value={email}
