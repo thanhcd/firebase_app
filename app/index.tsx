@@ -4,77 +4,120 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   Alert,
+  Image,
+  SafeAreaView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import images from '@/constants/images';
+import FormFields from '@/components/FormField';
+import icons from '@/constants/icons';
+import CustomButton from '@/components/CustomButton';
 
 export default function LoginScreen() {
-  const router = useRouter(); // ✅ Dùng để điều hướng
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSignUp = () => {
-    router.push('/signUp'); // ✅ Điều hướng sang sign-up.tsx
+    router.push('/signUp');
   };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     await signInWithEmailAndPassword(auth, email, password);
+  //     Alert.alert('Thành công', 'Đăng nhập thành công!');
+  //     router.push('/home'); // hoặc router.replace('/(tabs)') nếu bạn dùng tab layout
+  //   } catch (error: any) {
+  //     Alert.alert('Lỗi', error.message);
+  //   }
+  // };
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Lỗi', 'Email và mật khẩu không thể để trống!');
+      return;
+    }
+  
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email.trim(), password); // Loại bỏ khoảng trắng
       Alert.alert('Thành công', 'Đăng nhập thành công!');
-      router.push('/home'); // ✅ Điều hướng sang index.tsx (Home)
+      router.push('/home');
     } catch (error: any) {
+      console.log(error); // In lỗi ra console để debug
       Alert.alert('Lỗi', error.message);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Đăng nhập</Text>
-      <Text className='font-bold text-lg text-red-50'>hello</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Mật khẩu"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
+    <SafeAreaView className='w-full h-full bg-white'>
+      <View className='px-5'>
+        <View className='items-center'>
+          <Image source={images.sharebuy1} className='mt-14' />
+        </View>
+        <View className='py-2'>
+          <Text className='font-poppins-bold text-xl text-center text-primary-200'>Chào mừng đến với ShareBuy</Text>
+          <Text className='font-poppins-regular text-sm text-center text-gray-200 mt-2'>Đăng nhập để tiếp tục</Text>
+          <View className="w-full min-h-[83vh] flex">
+            <FormFields title="Email"
+              otherStyles="mt-5 border border-gray-100 h-16 justify-center items-center px-4 rounded-lg"
+              placeholder="Email của bạn"
+              icons={icons.message}
+              handleChangeText={setEmail} // Thêm hàm xử lý thay đổi văn bản
+              value={email} // Truyền giá trị email vào đây
+            />
+            <FormFields title="Password"
+              otherStyles="mt-5 border border-gray-100 h-16 justify-center items-center px-4 rounded-lg"
+              placeholder="Mật khẩu"
+              icons={icons.password}
+              handleChangeText={setPassword} // Thêm hàm xử lý thay đổi văn bản
+              value={password} // Truyền giá trị password vào đây
+            />
+            <CustomButton title={'Đăng nhập'}
+              textStyles={'text-white'}
+              containerStyles={'h-20 bg-primary-100 rounded-lg mt-5'}
+              handlePress={handleLogin}
+            />
+            <View className="flex-row items-center justify-center space-x-2 mt-8">
+              <View className="flex-1 border-t border-gray-100" />
+              <Text className="text-lg font-poppins-bold text-gray-200">HOẶC</Text>
+              <View className="flex-1 border-t border-gray-100" />
+            </View>
+            <CustomButton title="Đăng nhập với Google"
+              containerStyles="mt-5 border border-gray-100 h-20 justify-center items-center px-4 rounded-lg"
+              icons={icons.google}
+              textStyles={'text-gray-200'}
+              handlePress={{}}
+            />
+            <CustomButton title="Đăng nhập với Facebook"
+              containerStyles="mt-5 border border-gray-100 h-20 justify-center items-center px-4 rounded-lg"
+              icons={icons.facebook}
+              textStyles={'text-gray-200'}
+              handlePress={{}}
+            />
+            <TouchableOpacity >
+              <Text className='font-poppins-bold text-sm text-center text-primary-100 mt-2'>Quên mật khẩu</Text>
 
-      <View style={{ flexDirection: 'column', gap: 10 }}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Đăng nhập</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-          <Text style={styles.buttonText}>đăng ký</Text>
-        </TouchableOpacity>
+            </TouchableOpacity>
+            <View className="flex-row justify-center items-center mt-2">
+              <Text className="font-poppins-regular text-sm text-gray-200">
+                Không có tài khoản?
+              </Text>
+              <TouchableOpacity className="ml-1" onPress={() => handleSignUp()}>
+                <Text className="font-poppins-bold text-sm text-primary-100">
+                  Đăng ký
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+
+          </View>
+        </View>
+
       </View>
+    </SafeAreaView>
 
-    </View>
+
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center' , backgroundColor: '#fff'},
-  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 16 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 12,
-    borderRadius: 8,
-  },
-  buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
-});
