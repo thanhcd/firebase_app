@@ -3,6 +3,7 @@ import './global.css';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import AuthLayout from '@/lib/AuthLayout';
+import { AuthProvider } from '@/lib/AuthContext';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -26,12 +27,11 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthLayout>
+    <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
-        {/* Điều hướng đến /signIn sau khi thay đổi tệp */}
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="signIn" />
       </Stack>
-    </AuthLayout>
-
+    </AuthProvider>
   );
 }

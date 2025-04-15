@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
+import { Fetch } from '@/lib/Fetch'
 
 const home = () => {
   return (
-    <View>
+    <SafeAreaView className='flex-1'>
       <Text>home</Text>
-    </View>
+      <Fetch/>
+    </SafeAreaView>
   )
 }
 
