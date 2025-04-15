@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  Image,
-  SafeAreaView
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebaseConfig'; // Đảm bảo đường dẫn đúng
 import images from '@/constants/images';
 import FormFields from '@/components/FormField';
 import icons from '@/constants/icons';
@@ -20,6 +12,18 @@ export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Kiểm tra trạng thái đăng nhập khi component được tải
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Người dùng đã đăng nhập, chuyển hướng đến trang home
+        router.push('/home');
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener khi component unmount
+  }, []);
 
   const handleSignUp = () => {
     router.push('/signUp');
@@ -91,7 +95,6 @@ export default function LoginScreen() {
             />
             <TouchableOpacity >
               <Text className='font-poppins-bold text-sm text-center text-primary-100 mt-2'>Quên mật khẩu</Text>
-
             </TouchableOpacity>
             <View className="flex-row justify-center items-center mt-2">
               <Text className="font-poppins-regular text-sm text-gray-200">
@@ -103,14 +106,9 @@ export default function LoginScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
-
-
           </View>
         </View>
-
       </View>
     </SafeAreaView>
-
-
   );
 }

@@ -2,6 +2,7 @@ import { Slot, SplashScreen, Stack } from 'expo-router';
 import './global.css';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
+import AuthLayout from '@/lib/AuthLayout';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -25,9 +26,12 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-    {/* Điều hướng đến /signIn sau khi thay đổi tệp */}
-    <Stack.Screen name="signIn" />
-  </Stack>
+    <AuthLayout>
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Điều hướng đến /signIn sau khi thay đổi tệp */}
+        <Stack.Screen name="signIn" />
+      </Stack>
+    </AuthLayout>
+
   );
 }
