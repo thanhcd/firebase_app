@@ -7,22 +7,31 @@ import images from '@/constants/images';
 import FormFields from '@/components/FormField';
 import icons from '@/constants/icons';
 import CustomButton from '@/components/CustomButton';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Thêm state loading
   // Kiểm tra trạng thái đăng nhập khi component được tải
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Người dùng đã đăng nhập, chuyển hướng đến trang home
-        router.push('/home');
+    const checkLoginStatus = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user');
+  
+        onAuthStateChanged(auth, (user) => {
+          if (user || storedUser) {
+            console.log('Đã đăng nhập:', user || storedUser);
+            router.push('/home');
+          }
+        });
+      } catch (e) {
+        console.error('Lỗi khi lấy user từ AsyncStorage', e);
       }
-    });
-
-    return () => unsubscribe(); // Cleanup listener khi component unmount
+    };
+  
+    checkLoginStatus();
   }, []);
 
   const handleSignUp = () => {
@@ -36,7 +45,11 @@ export default function LoginScreen() {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password); // Loại bỏ khoảng trắng
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const user = userCredential.user;
+
+      // ✅ Lưu UID hoặc toàn bộ user nếu cần
+      await AsyncStorage.setItem('user', JSON.stringify(user));
       Alert.alert('Thành công', 'Đăng nhập thành công!');
       router.push('/home');
     } catch (error: any) {
@@ -45,6 +58,21 @@ export default function LoginScreen() {
     }
   };
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        router.push('/home');
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return null;
   return (
     <SafeAreaView className='w-full h-full bg-white'>
       <View className='px-5'>
