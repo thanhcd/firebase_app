@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
+import { router } from 'expo-router';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +22,8 @@ const SignUp = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Tạo tài khoản thành công:', userCredential.user);
+      alert('Tạo tài khoản thành công!');
+      router.push('/login')
       // Điều hướng hoặc hiển thị thông báo thành công tại đây
     } catch (error: any) {
       console.log('Sign up error:', error.code, error.message);
@@ -41,7 +44,6 @@ const SignUp = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <Text style={styles.title}>Tạo tài khoản</Text>
           <TextInput
@@ -61,7 +63,6 @@ const SignUp = () => {
           />
           <Button title="Đăng ký" onPress={handleSignUp} />
         </View>
-      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
