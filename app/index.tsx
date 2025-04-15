@@ -26,7 +26,7 @@ export default function LoginScreen() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Thành công', 'Đăng nhập thành công!');
-      router.push('/login'); // ✅ Điều hướng sang index.tsx (Home)
+      router.push('/home'); // ✅ Điều hướng sang index.tsx (Home)
     } catch (error: any) {
       Alert.alert('Lỗi', error.message);
     }
@@ -65,7 +65,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center' },
+  container: { flex: 1, padding: 24, justifyContent: 'center' , backgroundColor: '#fff'},
   title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 16 },
   input: {
     borderWidth: 1,
